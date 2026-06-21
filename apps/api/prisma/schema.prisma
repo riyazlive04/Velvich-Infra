@@ -1,0 +1,397 @@
+// Velvich Infra CRM — Prisma schema
+// Money is stored as BigInt paise (1 rupee = 100 paise). Dates are UTC.
+// Auth tables (Session/Account/Verification) follow the Better Auth contract;
+// the credential password hash lives in Account.password, not on User.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Enums
+// ============================================================================
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum RoleName {
+  OWNER
+  MANAGER
+  ACCOUNTS
+  FIELD
+  VIEWER
+}
+
+enum PermissionEffect {
+  ALLOW
+  DENY
+}
+
+enum TxnType {
+  INCOME
+  EXPENSE
+}
+
+enum TxnStatus {
+  RECEIVED
+  PENDING
+}
+
+enum PaidVia {
+  CASH
+  BANK
+  CHEQUE
+  UPI
+}
+
+enum ProjectStage {
+  ENQUIRY
+  SURVEY
+  DPR_PREPARATION
+  SUBMITTED
+  APPROVED
+  WORK_ORDER
+  EXECUTION
+  COMPLETED
+  ON_HOLD
+}
+
+// ============================================================================
+// Organization (single-tenant — exactly one row)
+// ============================================================================
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  address   String?
+  gstin     String?
+  pan       String?
+  logoKey   String?
+  settings  Json // editable categories, project types, stage labels
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================================
+// Auth + Users (Better Auth compatible)
+// ============================================================================
+model User {
+  id            String     @id @default(cuid())
+  name          String
+  email         String     @unique
+  emailVerified Boolean    @default(false)
+  image         String?
+  phone         String?
+  role          RoleName   @default(VIEWER)
+  status        UserStatus @default(ACTIVE)
+  lastLoginAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  sessions  Session[]
+  accounts  Account[]
+  overrides UserPermissionOverride[]
+
+  @@index([role])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String? // bcrypt/argon hash for the credential provider
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+model UserPermissionOverride {
+  id         String           @id @default(cuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission String // e.g. "transactions:create"
+  effect     PermissionEffect
+  createdAt  DateTime         @default(now())
+
+  @@unique([userId, permission])
+  @@index([userId])
+}
+
+// ============================================================================
+// Clients & contacts
+// ============================================================================
+model Client {
+  id        String          @id @default(cuid())
+  name      String
+  deptType  String // PWD, TNRD, Highways Dept, Rural Development, NHAI, Municipality, Private
+  city      String?
+  contacts  ClientContact[]
+  projects  Project[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model ClientContact {
+  id       String  @id @default(cuid())
+  clientId String
+  client   Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name     String
+  role     String? // Executive Engineer, AE, etc.
+  phone    String?
+  email    String?
+  notes    String?
+
+  @@index([clientId])
+}
+
+// ============================================================================
+// Staff
+// ============================================================================
+model Staff {
+  id          String         @id @default(cuid())
+  name        String
+  role        String // Survey Engineer, DGPS Operator, CAD Draftsman, DPR Engineer, ...
+  phone       String?
+  skills      String?
+  assignments ProjectStaff[]
+  activities  Activity[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+// ============================================================================
+// Projects & pipeline
+// ============================================================================
+model Project {
+  id                 String         @id @default(cuid())
+  name               String
+  type               String // editable list; required
+  deptType           String?
+  district           String?
+  clientId           String?
+  client             Client?        @relation(fields: [clientId], references: [id])
+  contractAmount     BigInt? // paise
+  stage              ProjectStage   @default(ENQUIRY)
+  startDate          DateTime?
+  workOrderNo        String?
+  sanctionRef        String?
+  expectedCompletion DateTime?
+  notes              String?
+  milestones         Milestone[]
+  stageHistory       StageHistory[]
+  staff              ProjectStaff[]
+  transactions       Transaction[]
+  activities         Activity[]
+  documents          Document[]
+  receivables        Receivable[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@index([clientId])
+  @@index([stage])
+}
+
+model Milestone {
+  id             String    @id @default(cuid())
+  projectId      String
+  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  label          String // Mobilization Advance, Interim, Final, Retention Release
+  expectedAmount BigInt?
+  dueDate        DateTime?
+
+  @@index([projectId])
+}
+
+model StageHistory {
+  id        String       @id @default(cuid())
+  projectId String
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  stage     ProjectStage
+  note      String?
+  changedBy String
+  changedAt DateTime     @default(now())
+
+  @@index([projectId])
+}
+
+model ProjectStaff {
+  projectId  String
+  staffId    String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  staff      Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  assignedAt DateTime @default(now())
+
+  @@id([projectId, staffId])
+  @@index([staffId])
+}
+
+// ============================================================================
+// Transactions
+// ============================================================================
+model Transaction {
+  id           String     @id @default(cuid())
+  type         TxnType
+  category     String // editable lists
+  description  String?
+  amount       BigInt // paise
+  date         DateTime
+  projectId    String?
+  project      Project?   @relation(fields: [projectId], references: [id])
+  incomeStatus TxnStatus? // income only
+  paidVia      PaidVia? // expense only
+  reference    String?
+  // GST (optional)
+  taxableValue BigInt?
+  gstPercent   Int?
+  tdsAmount    BigInt?
+  receiptKey   String? // R2 key of attached bill
+  source       String     @default("manual") // manual | receipt_ai | nl_ai | import | recurring
+  createdBy    String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([projectId])
+  @@index([type])
+  @@index([date])
+}
+
+// ============================================================================
+// Receivables / collections
+// ============================================================================
+model Receivable {
+  id             String     @id @default(cuid())
+  projectId      String
+  project        Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  expectedAmount BigInt
+  dueDate        DateTime?
+  status         TxnStatus  @default(PENDING)
+  followUps      FollowUp[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([projectId])
+  @@index([status])
+}
+
+model FollowUp {
+  id           String     @id @default(cuid())
+  receivableId String
+  receivable   Receivable @relation(fields: [receivableId], references: [id], onDelete: Cascade)
+  contactedAt  DateTime   @default(now())
+  byUser       String
+  outcome      String?
+
+  @@index([receivableId])
+}
+
+// ============================================================================
+// Activity log
+// ============================================================================
+model Activity {
+  id        String   @id @default(cuid())
+  type      String // Site Survey, Govt Office Visit, DPR Submission, ...
+  date      DateTime
+  notes     String?
+  photoKey  String?
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+  staffId   String?
+  staff     Staff?   @relation(fields: [staffId], references: [id])
+  createdBy String
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([date])
+}
+
+// ============================================================================
+// Documents
+// ============================================================================
+model Document {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fileKey    String // R2 key
+  fileName   String
+  mimeType   String
+  category   String? // survey data, drawings, DPR, sanction order, correspondence
+  version    Int      @default(1)
+  uploadedBy String
+  createdAt  DateTime @default(now())
+
+  @@index([projectId])
+}
+
+// ============================================================================
+// Audit
+// ============================================================================
+model AuditEntry {
+  id        String   @id @default(cuid())
+  actorId   String
+  action    String // CREATE | UPDATE | DELETE | PERMISSION_CHANGE | LOGIN
+  entity    String
+  entityId  String?
+  before    Json?
+  after     Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([actorId])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// Phase 2 — Tenders (scaffold only)
+// ============================================================================
+model Tender {
+  id                 String    @id @default(cuid())
+  deptType           String?
+  description        String
+  estimatedValue     BigInt?
+  submissionDeadline DateTime?
+  emdAmount          BigInt?
+  status             String    @default("IDENTIFIED") // IDENTIFIED PREPARING SUBMITTED WON LOST
+  convertedProjectId String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}

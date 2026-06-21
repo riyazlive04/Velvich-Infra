@@ -1,0 +1,29 @@
+{
+  "name": "velvich-infra-crm",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Secure multi-user project, collections and operations system for Velvich Infra",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.15.9",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "test": "pnpm -r test",
+    "prisma:generate": "pnpm --filter @velvich/api prisma:generate",
+    "prisma:migrate": "pnpm --filter @velvich/api prisma:migrate",
+    "prisma:seed": "pnpm --filter @velvich/api prisma:seed",
+    "db:reset": "pnpm --filter @velvich/api db:reset"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  }
+}

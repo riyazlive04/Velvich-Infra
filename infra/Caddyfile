@@ -1,0 +1,14 @@
+# Reverse proxy. Replace :80 with your domain (e.g. crm.velvichinfra.in) on the
+# VPS and Caddy will auto-provision HTTPS. The API is served under /api/* and
+# everything else goes to the Next.js web app.
+:80 {
+	encode gzip
+
+	handle /api/* {
+		reverse_proxy api:4000
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}
