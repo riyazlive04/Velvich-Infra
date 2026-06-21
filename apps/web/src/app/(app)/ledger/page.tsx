@@ -77,7 +77,7 @@ export default function LedgerPage() {
             ) : (
               <Card className="p-0">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full min-w-[560px] text-sm">
                     <thead>
                       <tr className="border-b border-slate-200 text-left text-xs uppercase text-slate-500">
                         <th className="px-4 py-3 font-medium">Date</th>

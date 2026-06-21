@@ -89,7 +89,7 @@ export default function AuditPage() {
         <EmptyState title="No audit entries" hint="Activity will appear here as changes are made." />
       ) : (
         <Card className="overflow-x-auto p-0">
-          <table className="w-full text-left text-sm">
+          <table className="w-full min-w-[680px] text-left text-sm">
             <thead className="border-b border-slate-200 text-xs uppercase text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Time</th>
