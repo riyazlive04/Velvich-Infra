@@ -3,6 +3,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { loadEnv } from '../config/env';
+import { buildPrismaOptions } from '../prisma/prisma-options';
 
 const env = loadEnv();
 
@@ -14,7 +15,7 @@ const env = loadEnv();
  * `role` and `status` are server-controlled (input: false) — clients can never
  * self-assign a role at sign-up; the Owner sets roles via the users module.
  */
-const authPrisma = new PrismaClient();
+const authPrisma = new PrismaClient(buildPrismaOptions());
 
 export const auth = betterAuth({
   appName: 'Velvich Infra CRM',

@@ -4,7 +4,11 @@
 // the credential password hash lives in Account.password, not on User.
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // driverAdapters lets the serverless build use the Neon driver (no engine
+  // binary to bundle on Vercel). native is for local dev.
+  previewFeatures = ["driverAdapters"]
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {

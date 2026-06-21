@@ -43,3 +43,6 @@ tmp/
 tools/userguide/guide.html
 tools/userguide/video/
 tools/userguide/mobile/
+
+# vercel
+.vercel
