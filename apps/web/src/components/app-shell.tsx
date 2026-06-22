@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -20,6 +21,7 @@ import {
   HardHat,
   Menu,
   LogOut,
+  X,
 } from 'lucide-react';
 import type { Capability } from '@velvich/shared';
 import { signOut } from '@/lib/api';
@@ -49,10 +51,24 @@ const NAV: NavItem[] = [
   { href: '/audit', label: 'Audit Log', icon: ScrollText, cap: 'audit:view' },
 ];
 
+function Brand() {
+  return (
+    <div className="rounded-xl bg-white p-3 shadow-sm">
+      <Image
+        src="/logo-wordmark.png"
+        alt="Velvich Infra"
+        width={604}
+        height={330}
+        priority
+        className="mx-auto h-11 w-auto"
+      />
+    </div>
+  );
+}
+
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
-  const permissions = useMe()?.permissions ?? [];
-  const allowed = new Set(permissions);
+  const allowed = new Set(useMe()?.permissions ?? []);
   return (
     <nav className="space-y-1">
       {NAV.filter((n) => allowed.has(n.cap)).map((item) => {
@@ -63,12 +79,9 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             key={item.href}
             href={item.href}
             onClick={onNavigate}
-            className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium',
-              active ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-100',
-            )}
+            className={cn('nav-link', active && 'nav-link-active')}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-4 w-4 shrink-0" />
             {item.label}
           </Link>
         );
@@ -89,40 +102,69 @@ export function AppShell({ children }: { children: ReactNode }) {
     router.replace('/login');
   }
 
+  const initials = (me?.user.name ?? '?')
+    .split(' ')
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
   return (
     <div className="flex min-h-screen">
       {/* Desktop sidebar */}
-      <aside className="hidden w-60 shrink-0 border-r border-slate-200 bg-white p-4 lg:block">
-        <div className="mb-6 px-2">
-          <p className="font-bold text-brand-700">Velvich Infra</p>
-          <p className="text-xs text-slate-500">{me?.organization?.name ?? 'CRM'}</p>
-        </div>
+      <aside className="hidden w-64 shrink-0 flex-col bg-navy-900 p-4 lg:flex">
+        <Brand />
+        <p className="mb-5 mt-3 px-1 text-xs font-medium text-navy-200/70">
+          {me?.organization?.name ?? 'Velvich Infra'}
+        </p>
         <NavLinks />
+        <div className="mt-auto px-1 pt-4 text-[0.7rem] text-navy-200/50">
+          Velvich Infra CRM · Phase 1
+        </div>
       </aside>
 
       {/* Mobile drawer */}
       {mobileOpen ? (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-64 bg-white p-4">
-            <p className="mb-6 px-2 font-bold text-brand-700">Velvich Infra</p>
-            <NavLinks onNavigate={() => setMobileOpen(false)} />
+          <div className="absolute inset-0 bg-navy-950/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute left-0 top-0 flex h-full w-72 flex-col bg-navy-900 p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-xs font-medium text-navy-200/70">Menu</span>
+              <button className="rounded-lg p-1 text-navy-100 hover:bg-white/10" onClick={() => setMobileOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <Brand />
+            <div className="mt-4">
+              <NavLinks onNavigate={() => setMobileOpen(false)} />
+            </div>
           </aside>
         </div>
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3">
-          <button className="btn-ghost p-2 lg:hidden" onClick={() => setMobileOpen(true)}>
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur">
+          <button
+            className="rounded-lg p-2 text-navy-700 hover:bg-slate-100 lg:hidden"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open menu"
+          >
             <Menu className="h-5 w-5" />
           </button>
           <div className="hidden lg:block" />
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-sm font-medium">{me?.user.name}</p>
+              <p className="text-sm font-semibold text-navy-900">{me?.user.name}</p>
               <p className="text-xs text-slate-500">{me?.user.role}</p>
             </div>
-            <button onClick={handleSignOut} className="btn-ghost p-2" title="Sign out">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-navy-700 text-xs font-bold text-white">
+              {initials}
+            </div>
+            <button
+              onClick={handleSignOut}
+              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-navy-700"
+              title="Sign out"
+            >
               <LogOut className="h-4 w-4" />
             </button>
           </div>
@@ -133,21 +175,24 @@ export function AppShell({ children }: { children: ReactNode }) {
   );
 }
 
-/** Convenience wrapper for a page header with an action slot. */
+/** Page header with an optional brand eyebrow and an action slot. */
 export function PageHeader({
   title,
   subtitle,
+  eyebrow,
   action,
 }: {
   title: string;
   subtitle?: string;
+  eyebrow?: string;
   action?: ReactNode;
 }) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">{title}</h1>
-        {subtitle ? <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p> : null}
+        {eyebrow ? <span className="eyebrow mb-2">{eyebrow}</span> : null}
+        <h1 className="text-2xl font-bold tracking-tight text-navy-900">{title}</h1>
+        {subtitle ? <p className="mt-1 text-sm text-slate-500">{subtitle}</p> : null}
       </div>
       {action}
     </div>
@@ -156,6 +201,5 @@ export function PageHeader({
 
 /** Hide children unless the user holds the capability (UI convenience only). */
 export function Can({ cap, children }: { cap: Capability; children: ReactNode }) {
-  const allowed = useCan(cap);
-  return allowed ? <>{children}</> : null;
+  return useCan(cap) ? <>{children}</> : null;
 }

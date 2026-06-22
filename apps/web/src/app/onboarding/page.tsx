@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { api, signIn } from '@/lib/api';
@@ -48,12 +49,19 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center bg-navy-900 p-4">
+      <div className="w-full max-w-md">
+        <div className="mb-6 flex flex-col items-center">
+          <div className="rounded-2xl bg-white p-4 shadow-lg">
+            <Image src="/logo-wordmark.png" alt="Velvich Infra" width={604} height={330} priority className="h-14 w-auto" />
+          </div>
+        </div>
+        <Card className="w-full p-6">
         <div className="mb-6">
-          <h1 className="text-xl font-bold text-brand-700">Welcome to Velvich Infra CRM</h1>
+          <span className="eyebrow mb-2">First-time setup</span>
+          <h1 className="text-xl font-bold text-navy-900">Welcome</h1>
           <p className="mt-1 text-sm text-slate-500">
-            First-time setup - create your organisation and the Owner account.
+            Create your organisation and the Owner account.
           </p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
@@ -88,7 +96,8 @@ export default function OnboardingPage() {
             {loading ? 'Setting up…' : 'Create organisation & owner'}
           </Button>
         </form>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }

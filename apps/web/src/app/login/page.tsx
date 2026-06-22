@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { api, signIn } from '@/lib/api';
@@ -40,11 +41,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <div className="mb-6 text-center">
-          <h1 className="text-xl font-bold text-brand-700">Velvich Infra CRM</h1>
-          <p className="mt-1 text-sm text-slate-500">Sign in to continue</p>
+    <div className="flex min-h-screen items-center justify-center bg-navy-900 p-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 flex flex-col items-center">
+          <div className="rounded-2xl bg-white p-4 shadow-lg">
+            <Image src="/logo-wordmark.png" alt="Velvich Infra" width={604} height={330} priority className="h-14 w-auto" />
+          </div>
+          <p className="mt-4 text-sm font-medium text-navy-100/80">Project &amp; collections management</p>
+        </div>
+        <Card className="w-full p-6">
+        <div className="mb-6">
+          <h1 className="text-lg font-bold text-navy-900">Sign in</h1>
+          <p className="mt-1 text-sm text-slate-500">Use your Velvich Infra account</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <Field label="Email">
@@ -70,7 +78,9 @@ export default function LoginPage() {
             {loading ? 'Signing in…' : 'Sign in'}
           </Button>
         </form>
-      </Card>
+        </Card>
+        <p className="mt-6 text-center text-xs text-navy-200/50">Velvich Infra CRM</p>
+      </div>
     </div>
   );
 }
