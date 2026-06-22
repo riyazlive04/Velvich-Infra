@@ -9,7 +9,7 @@ import { AccountsService } from '../accounts/accounts.service';
 
 /**
  * Excel exports via ExcelJS. PDF exports are scaffolded (TODO: server-side
- * renderer) — see exportPdf below.
+ * renderer) - see exportPdf below.
  */
 @Controller('reports')
 @UseGuards(PermissionsGuard)

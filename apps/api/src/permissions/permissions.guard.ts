@@ -15,7 +15,7 @@ import { REQUIRE_PERMISSION_KEY } from './require-permission.decorator';
  * and checks them against the user's effective permission set. The effective set
  * is computed once and cached on the request to avoid repeat DB hits.
  *
- * This is the source of truth — UI gating is convenience only.
+ * This is the source of truth - UI gating is convenience only.
  */
 @Injectable()
 export class PermissionsGuard implements CanActivate {

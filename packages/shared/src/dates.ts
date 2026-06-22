@@ -30,7 +30,7 @@ export function formatISTDateTime(date: Date | string): string {
   }).format(d);
 }
 
-/** "YYYY-MM" month key in IST for a given date — used by the monthly ledger. */
+/** "YYYY-MM" month key in IST for a given date - used by the monthly ledger. */
 export function istMonthKey(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
   const parts = new Intl.DateTimeFormat('en-CA', {

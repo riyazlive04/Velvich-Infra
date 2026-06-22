@@ -15,7 +15,7 @@ for (const candidate of ['.env', '../../.env', '../../../.env']) {
 
 /**
  * Validated environment. Fails fast on boot if a required secret is missing.
- * Read config through this — never `process.env` directly in feature code.
+ * Read config through this - never `process.env` directly in feature code.
  */
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),

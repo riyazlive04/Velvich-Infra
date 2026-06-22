@@ -19,7 +19,7 @@ interface ProjectAccount {
 }
 
 function CollectionBar({ percent }: { percent: number | null }) {
-  if (percent === null) return <span className="text-slate-400">—</span>;
+  if (percent === null) return <span className="text-slate-400">-</span>;
   const clamped = Math.max(0, Math.min(100, percent));
   return (
     <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function AccountsPage() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         {row.contractAmount === null ? (
-                          <span className="text-slate-400">—</span>
+                          <span className="text-slate-400">-</span>
                         ) : (
                           formatINR(row.contractAmount)
                         )}
@@ -110,7 +110,7 @@ export default function AccountsPage() {
                     <dt className="text-xs text-slate-500">Contract</dt>
                     <dd>
                       {row.contractAmount === null ? (
-                        <span className="text-slate-400">—</span>
+                        <span className="text-slate-400">-</span>
                       ) : (
                         formatINR(row.contractAmount)
                       )}

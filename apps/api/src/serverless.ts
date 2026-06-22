@@ -38,7 +38,7 @@ export async function getApp(): Promise<Express> {
     app.setGlobalPrefix('api');
     app.useGlobalFilters(new AllExceptionsFilter());
 
-    await app.init(); // NOT listen() — Vercel owns the HTTP server
+    await app.init(); // NOT listen() - Vercel owns the HTTP server
     cached = server;
     return server;
   })();

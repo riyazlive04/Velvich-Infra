@@ -134,7 +134,7 @@ export class ProjectsService {
     return project;
   }
 
-  /** Move a project to a new stage — always records StageHistory. */
+  /** Move a project to a new stage - always records StageHistory. */
   async changeStage(actor: AuthUser, id: string, input: StageChangeInput) {
     const project = await this.requireProject(id);
     if (project.stage === input.stage && !input.note) return project;

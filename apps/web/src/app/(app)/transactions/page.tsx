@@ -92,7 +92,7 @@ export default function TransactionsPage() {
     <div>
       <PageHeader
         title="Transactions"
-        subtitle="Income & expenses — log by photo, by sentence, or manually"
+        subtitle="Income & expenses - log by photo, by sentence, or manually"
         action={
           <Can cap="transactions:create">
             <div className="flex gap-2">
@@ -249,7 +249,7 @@ function AiAssistModal({
   void projects;
 
   return (
-    <Modal open onClose={onClose} title="AI assist — creates an editable draft">
+    <Modal open onClose={onClose} title="AI assist - creates an editable draft">
       <div className="space-y-5">
         <div>
           <p className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-700">
@@ -289,7 +289,7 @@ function AiAssistModal({
 
         {error ? <p className="text-sm text-amber-700">{error}</p> : null}
         <p className="text-xs text-slate-400">
-          Every AI result is an editable draft — nothing is saved until you confirm it.
+          Every AI result is an editable draft - nothing is saved until you confirm it.
         </p>
       </div>
     </Modal>

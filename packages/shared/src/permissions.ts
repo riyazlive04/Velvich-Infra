@@ -1,5 +1,5 @@
 /**
- * Permission model — the single source of truth shared by API (enforcement)
+ * Permission model - the single source of truth shared by API (enforcement)
  * and Web (UI gating). Capabilities are `resource:action` strings.
  *
  * Resolution: effective = rolePreset ∪ ALLOW-overrides − DENY-overrides.
@@ -136,7 +136,7 @@ export function isCapability(value: string): value is Capability {
 }
 
 /**
- * Role presets — defaults only. The Owner can override any capability per user.
+ * Role presets - defaults only. The Owner can override any capability per user.
  * OWNER is intentionally NOT enumerated here: it is granted the full set
  * implicitly and can never be reduced (see getEffectivePermissions).
  */

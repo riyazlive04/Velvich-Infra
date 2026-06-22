@@ -33,7 +33,7 @@ import { BigIntInterceptor } from './common/bigint.interceptor';
     StorageModule,
     AiModule,
     AccountsModule,
-    // Auth must load early — it registers the global AuthGuard.
+    // Auth must load early - it registers the global AuthGuard.
     AuthModule,
     HealthModule,
     // Feature modules

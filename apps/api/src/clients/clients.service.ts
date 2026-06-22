@@ -81,7 +81,7 @@ export class ClientsService {
   async remove(actor: AuthUser, id: string) {
     const client = await this.get(id);
     if (client.projects.length > 0) {
-      // Keep referential history — block deletion of clients with projects.
+      // Keep referential history - block deletion of clients with projects.
       throw new NotFoundException('Cannot delete a client that has projects');
     }
     await this.prisma.client.delete({ where: { id } });

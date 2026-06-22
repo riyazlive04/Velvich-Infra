@@ -1,5 +1,5 @@
 /**
- * Dev seed — one Organization, one OWNER user (with a credential password),
+ * Dev seed - one Organization, one OWNER user (with a credential password),
  * the default editable lists, and a handful of sample records.
  *
  * The OWNER password is hashed with bcryptjs, matching the custom hasher
@@ -51,7 +51,7 @@ async function main() {
         },
       },
     });
-    console.log(`✓ Owner created — login: ${OWNER_EMAIL} / ${OWNER_PASSWORD}`);
+    console.log(`✓ Owner created - login: ${OWNER_EMAIL} / ${OWNER_PASSWORD}`);
   }
 
   // --- Sample data (dev only) -----------------------------------------------

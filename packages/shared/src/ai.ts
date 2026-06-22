@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /**
- * AI assist contracts. Every AI method returns an EDITABLE DRAFT — never a
+ * AI assist contracts. Every AI method returns an EDITABLE DRAFT - never a
  * committed record. The caller renders a confirmation card with every field
  * editable; persistence is a separate, explicit user action.
  */

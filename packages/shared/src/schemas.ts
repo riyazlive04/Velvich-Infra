@@ -3,7 +3,7 @@ import { ALL_CAPABILITIES } from './permissions.js';
 import { PAID_VIA, PROJECT_STAGES, TXN_STATUSES, TXN_TYPES } from './enums.js';
 
 /**
- * Shared Zod schemas — validate the SAME shape on client (RHF resolver) and
+ * Shared Zod schemas - validate the SAME shape on client (RHF resolver) and
  * server (DTO). Money fields are integer paise. Dates are ISO strings.
  */
 
@@ -93,7 +93,7 @@ export const milestoneSchema = z.object({
 });
 
 export const projectSchema = z.object({
-  // Only name + type are required — everything else optional (spec §6.5).
+  // Only name + type are required - everything else optional (spec §6.5).
   name: z.string().min(2),
   type: z.string().min(1),
   deptType: z.string().optional(),

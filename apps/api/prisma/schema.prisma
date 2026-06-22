@@ -1,4 +1,4 @@
-// Velvich Infra CRM — Prisma schema
+// Velvich Infra CRM - Prisma schema
 // Money is stored as BigInt paise (1 rupee = 100 paise). Dates are UTC.
 // Auth tables (Session/Account/Verification) follow the Better Auth contract;
 // the credential password hash lives in Account.password, not on User.
@@ -67,7 +67,7 @@ enum ProjectStage {
 }
 
 // ============================================================================
-// Organization (single-tenant — exactly one row)
+// Organization (single-tenant - exactly one row)
 // ============================================================================
 model Organization {
   id        String   @id @default(cuid())
@@ -385,7 +385,7 @@ model AuditEntry {
 }
 
 // ============================================================================
-// Phase 2 — Tenders (scaffold only)
+// Phase 2 - Tenders (scaffold only)
 // ============================================================================
 model Tender {
   id                 String    @id @default(cuid())

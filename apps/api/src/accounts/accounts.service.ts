@@ -18,7 +18,7 @@ export interface ProjectAccount {
 export class AccountsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  /** Per-project P&L — every figure derived from transactions. */
+  /** Per-project P&L - every figure derived from transactions. */
   async projectAccount(projectId: string): Promise<ProjectAccount> {
     const project = await this.prisma.project.findUnique({
       where: { id: projectId },

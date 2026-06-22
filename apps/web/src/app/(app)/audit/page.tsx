@@ -47,7 +47,7 @@ function actionColor(action: string): BadgeColor {
 }
 
 function truncate(value: string | null): string {
-  if (!value) return '—';
+  if (!value) return '-';
   return value.length > 12 ? `${value.slice(0, 12)}…` : value;
 }
 

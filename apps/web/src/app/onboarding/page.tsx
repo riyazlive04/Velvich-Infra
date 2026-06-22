@@ -53,7 +53,7 @@ export default function OnboardingPage() {
         <div className="mb-6">
           <h1 className="text-xl font-bold text-brand-700">Welcome to Velvich Infra CRM</h1>
           <p className="mt-1 text-sm text-slate-500">
-            First-time setup — create your organisation and the Owner account.
+            First-time setup - create your organisation and the Owner account.
           </p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">

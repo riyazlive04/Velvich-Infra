@@ -15,7 +15,7 @@ export class SettingsController {
     private readonly audit: AuditService,
   ) {}
 
-  /** Open to any authenticated user — forms read category/type lists from here. */
+  /** Open to any authenticated user - forms read category/type lists from here. */
   @Get()
   async get() {
     const org = await this.prisma.organization.findFirst();

@@ -10,12 +10,12 @@ import {
 import { loadEnv } from '../config/env';
 
 /**
- * Provider-agnostic AI assist. Every method returns an EDITABLE DRAFT — never a
+ * Provider-agnostic AI assist. Every method returns an EDITABLE DRAFT - never a
  * committed record. Model, temperature and token limits are configured in ONE
  * place (env). When AI is disabled or unconfigured, callers fall back to the
  * manual form (isEnabled() === false).
  *
- * The model never sees other users' data — only the minimal AiContext passed in.
+ * The model never sees other users' data - only the minimal AiContext passed in.
  */
 @Injectable()
 export class AiService {
@@ -40,7 +40,7 @@ export class AiService {
     const supported = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
     if (!supported.includes(mime)) {
       // PDFs / unsupported types: return a low-confidence empty draft to edit.
-      return this.emptyDraft(ctx, 'Unsupported file type for vision — please enter manually.');
+      return this.emptyDraft(ctx, 'Unsupported file type for vision - please enter manually.');
     }
 
     const message = await this.client!.messages.create({
@@ -90,7 +90,7 @@ export class AiService {
       '"confidence": number between 0 and 1 }.',
       `Income categories: ${ctx.incomeCategories.join(', ')}.`,
       `Expense categories: ${ctx.expenseCategories.join(', ')}.`,
-      `Known projects (id — name): ${ctx.projects.map((p) => `${p.id} — ${p.name}`).join('; ') || 'none'}.`,
+      `Known projects (id - name): ${ctx.projects.map((p) => `${p.id} - ${p.name}`).join('; ') || 'none'}.`,
       'Pick suggestedProjectId only when the text clearly names a known project; otherwise null.',
       'If unsure about a field, use null and lower the confidence.',
     ].join('\n');
@@ -153,7 +153,7 @@ export class AiService {
 
   private assertEnabled(): void {
     if (!this.client) {
-      throw new ServiceUnavailableException('AI assist is disabled — use the manual form');
+      throw new ServiceUnavailableException('AI assist is disabled - use the manual form');
     }
   }
 }

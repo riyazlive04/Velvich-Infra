@@ -10,7 +10,7 @@ import { randomUUID } from 'node:crypto';
 import { loadEnv } from '../config/env';
 
 /**
- * Cloudflare R2 (S3-compatible) wrapper. Buckets are PRIVATE — objects are only
+ * Cloudflare R2 (S3-compatible) wrapper. Buckets are PRIVATE - objects are only
  * reachable via short-lived signed URLs minted after a permission check. Keys
  * are namespaced and randomised so they are unguessable.
  */

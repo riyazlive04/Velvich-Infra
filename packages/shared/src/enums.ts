@@ -1,4 +1,4 @@
-/** Domain enums — kept in sync with the Prisma schema. */
+/** Domain enums - kept in sync with the Prisma schema. */
 
 export const PROJECT_STAGES = [
   'ENQUIRY',
@@ -43,7 +43,7 @@ export type UserStatus = (typeof USER_STATUSES)[number];
 /**
  * Default editable lists seeded into Organization.settings. The Owner can edit
  * these in Settings; nothing in the app should hard-code these values beyond
- * the seed — always read from org settings at runtime.
+ * the seed - always read from org settings at runtime.
  */
 export const DEFAULT_SETTINGS = {
   projectTypes: [
@@ -58,9 +58,9 @@ export const DEFAULT_SETTINGS = {
     'Traffic Study',
     'DGPS Survey',
     'DPR',
-    'Land Survey — Agriculture',
-    'Land Survey — Residential',
-    'Land Survey — Hill',
+    'Land Survey - Agriculture',
+    'Land Survey - Residential',
+    'Land Survey - Hill',
     'Other',
   ],
   deptTypes: [

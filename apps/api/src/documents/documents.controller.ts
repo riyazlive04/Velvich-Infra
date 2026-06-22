@@ -47,7 +47,7 @@ export class DocumentsController {
     return this.documents.upload(actor, file, { projectId, category });
   }
 
-  /** Permission-checked signed URL — the only way to reach a private object. */
+  /** Permission-checked signed URL - the only way to reach a private object. */
   @Get(':id/download')
   @RequirePermission('documents:view')
   download(@CurrentUser() actor: AuthUser, @Param('id') id: string) {

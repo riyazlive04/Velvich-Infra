@@ -143,7 +143,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
       {tempPassword ? (
         <div className="space-y-4">
           <p className="text-sm text-slate-600">
-            User created. Share this one-time password securely — they should reset it on first login.
+            User created. Share this one-time password securely - they should reset it on first login.
           </p>
           <div className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 font-mono text-sm">
             <KeyRound className="h-4 w-4" /> {tempPassword}
@@ -231,13 +231,13 @@ function PermissionMatrixModal({ user, onClose }: { user: UserRow; onClose: () =
   const dirty = Object.keys(overrides).length > 0;
 
   return (
-    <Modal open onClose={onClose} title={`Permissions — ${user.name}`} wide>
+    <Modal open onClose={onClose} title={`Permissions - ${user.name}`} wide>
       {isLoading ? (
         <Spinner />
       ) : (
         <div className="space-y-5">
           <p className="text-sm text-slate-500">
-            Role <Badge color="blue">{user.role}</Badge> sets the defaults. Override any capability to Allow or Deny — an
+            Role <Badge color="blue">{user.role}</Badge> sets the defaults. Override any capability to Allow or Deny - an
             explicit override always wins. Changes apply on the user&apos;s next request.
           </p>
 

@@ -22,7 +22,7 @@ export class UsersController {
     private readonly prisma: PrismaService,
   ) {}
 
-  /** Current principal + effective permissions — the web app calls this on load. */
+  /** Current principal + effective permissions - the web app calls this on load. */
   @Get('me')
   async me(@CurrentUser() user: AuthUser) {
     const effective = await this.permissions.getEffective(user.id, user.role);

@@ -10,7 +10,7 @@ import { ImportService, type ImportPayload } from './import.service';
 export class ImportController {
   constructor(private readonly importer: ImportService) {}
 
-  // Migration is an Owner-grade action — gate on settings:manage.
+  // Migration is an Owner-grade action - gate on settings:manage.
   @Post('prototype')
   @RequirePermission('settings:manage')
   run(@CurrentUser() actor: AuthUser, @Body() payload: ImportPayload) {

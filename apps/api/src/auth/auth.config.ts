@@ -12,7 +12,7 @@ const env = loadEnv();
  * It uses its own Prisma client connection. The password hash lives in the
  * Account table; we configure bcryptjs so seeded hashes verify identically.
  *
- * `role` and `status` are server-controlled (input: false) — clients can never
+ * `role` and `status` are server-controlled (input: false) - clients can never
  * self-assign a role at sign-up; the Owner sets roles via the users module.
  */
 const authPrisma = new PrismaClient(buildPrismaOptions());
@@ -26,7 +26,7 @@ export const auth = betterAuth({
   trustedOrigins: [env.WEB_ORIGIN],
   emailAndPassword: {
     enabled: true,
-    // Disable open self-registration — users are created by the Owner.
+    // Disable open self-registration - users are created by the Owner.
     disableSignUp: false,
     minPasswordLength: 8,
     password: {

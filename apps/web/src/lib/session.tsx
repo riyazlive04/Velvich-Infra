@@ -28,7 +28,7 @@ export function useSessionState() {
 
 /**
  * Permission-aware UI gate. Mirrors the server's effective permissions from /me.
- * This is convenience only — the API independently enforces every action.
+ * This is convenience only - the API independently enforces every action.
  */
 export function useCan(capability: Capability): boolean {
   return useContext(SessionContext).permissions.has(capability);

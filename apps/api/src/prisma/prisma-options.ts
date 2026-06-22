@@ -3,11 +3,11 @@ import type { Prisma } from '@prisma/client';
 /**
  * Builds PrismaClient constructor options.
  *
- * - Local/Docker (default): a plain client over a TCP connection — works with
+ * - Local/Docker (default): a plain client over a TCP connection - works with
  *   any Postgres, no preview features needed at runtime.
  * - Serverless on Vercel (USE_NEON=true): the Neon driver adapter, which talks
  *   to Neon over its serverless driver instead of the Prisma query-engine
- *   binary. This is the reliable path on Vercel — nothing native to bundle.
+ *   binary. This is the reliable path on Vercel - nothing native to bundle.
  *
  * Both the app's PrismaService and Better Auth's own client use this so they
  * behave identically.

@@ -16,7 +16,7 @@ import { AuditService } from '../audit/audit.service';
 
 /**
  * First-run setup. Creates the Organization and the first OWNER. Permitted only
- * while the system has no users — once an Owner exists this is locked.
+ * while the system has no users - once an Owner exists this is locked.
  */
 @Controller('onboarding')
 export class OnboardingController {

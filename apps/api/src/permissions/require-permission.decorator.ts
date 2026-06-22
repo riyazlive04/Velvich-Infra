@@ -4,7 +4,7 @@ import type { Capability } from '@velvich/shared';
 export const REQUIRE_PERMISSION_KEY = 'requirePermission';
 
 /**
- * Guard a route with one or more capabilities (AND semantics — the user must
+ * Guard a route with one or more capabilities (AND semantics - the user must
  * hold every listed capability). Enforced server-side by PermissionsGuard.
  *
  *   @RequirePermission('transactions:create')

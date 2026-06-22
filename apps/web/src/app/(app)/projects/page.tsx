@@ -229,7 +229,7 @@ function CreateProjectModal({ onClose }: { onClose: () => void }) {
           </Field>
           <Field label="Department">
             <select className="input" value={form.deptType} onChange={(e) => setForm({ ...form, deptType: e.target.value })}>
-              <option value="">—</option>
+              <option value="">-</option>
               {deptTypes.map((d) => (
                 <option key={d} value={d}>
                   {d}
