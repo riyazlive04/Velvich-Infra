@@ -5,13 +5,21 @@ import type { auth as AuthInstance } from './auth.config';
 /**
  * Minimal Node <-> Web (Fetch) adapters for Better Auth.
  *
- * We intentionally do NOT use `better-auth/node` (toNodeHandler/fromNodeHeaders)
- * because that subpath is ESM-only (node.mjs). Our API compiles to CommonJS, and
- * Vercel's bundler resolves it to the .mjs file, so `require()`-ing it throws
- * ERR_REQUIRE_ESM at runtime. These inlined helpers use the global Fetch API
- * (available on Node 20+) and the `auth.handler` / `auth.api` surface from the
- * main `better-auth` package (which is CommonJS-friendly).
+ * We intentionally do NOT use `better-auth/node` (toNodeHandler/fromNodeHeaders):
+ * that subpath is ESM-only (node.mjs), and our CommonJS build `require()`s it on
+ * Vercel, throwing ERR_REQUIRE_ESM. These helpers use the global Fetch API
+ * (Node 20+) instead. The response is described structurally so the code
+ * compiles regardless of the exact `Response` lib type the build resolves.
  */
+
+interface WebResponse {
+  status: number;
+  headers: {
+    forEach(cb: (value: string, key: string) => void): void;
+    getSetCookie?(): string[];
+  };
+  arrayBuffer(): Promise<ArrayBuffer>;
+}
 
 export function headersFromNode(nodeHeaders: IncomingHttpHeaders): Headers {
   const headers = new Headers();
@@ -38,18 +46,20 @@ async function webRequestFromNode(req: ExpressRequest): Promise<Request> {
   const host = req.get('host') ?? 'localhost';
   const url = `${proto}://${host}${req.originalUrl}`;
   const body = await readRawBody(req);
-  return new Request(url, {
+  const init: Record<string, unknown> = {
     method: req.method,
     headers: headersFromNode(req.headers),
-    body: body && body.length ? body : undefined,
-    // `duplex` is required by Node when sending a body; harmless otherwise.
-    ...(body && body.length ? { duplex: 'half' } : {}),
-  } as RequestInit);
+  };
+  if (body && body.length) {
+    init.body = body;
+    init.duplex = 'half';
+  }
+  return new Request(url, init as RequestInit);
 }
 
-async function writeWebResponse(webRes: Response, res: ExpressResponse): Promise<void> {
+async function writeWebResponse(webRes: WebResponse, res: ExpressResponse): Promise<void> {
   res.status(webRes.status);
-  const setCookies = (webRes.headers as Headers & { getSetCookie?: () => string[] }).getSetCookie?.() ?? [];
+  const setCookies = webRes.headers.getSetCookie?.() ?? [];
   webRes.headers.forEach((value, key) => {
     if (key.toLowerCase() === 'set-cookie') return; // handled below (may be multiple)
     res.setHeader(key, value);
@@ -64,11 +74,12 @@ export function mountBetterAuth(
   server: { all: (path: string, handler: (req: ExpressRequest, res: ExpressResponse) => void) => void },
   auth: typeof AuthInstance,
 ): void {
+  const handler = auth.handler as unknown as (request: Request) => Promise<WebResponse>;
   server.all('/api/auth/*', (req: ExpressRequest, res: ExpressResponse) => {
     void (async () => {
       try {
         const webReq = await webRequestFromNode(req);
-        const webRes = await auth.handler(webReq);
+        const webRes = await handler(webReq);
         await writeWebResponse(webRes, res);
       } catch {
         if (!res.headersSent) res.status(500).json({ message: 'Authentication error' });
