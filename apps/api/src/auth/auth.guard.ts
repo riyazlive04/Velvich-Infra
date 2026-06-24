@@ -5,10 +5,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { fromNodeHeaders } from 'better-auth/node';
 import type { Request } from 'express';
 import type { RoleName } from '@velvich/shared';
 import { auth } from './auth.config';
+import { headersFromNode } from './node-adapter';
 import { IS_PUBLIC_KEY } from './public.decorator';
 
 /**
@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate {
     if (isPublic) return true;
 
     const req = context.switchToHttp().getRequest<Request>();
-    const result = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
+    const result = await auth.api.getSession({ headers: headersFromNode(req.headers) });
 
     if (!result?.user) {
       throw new UnauthorizedException('Authentication required');
