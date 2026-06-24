@@ -33,6 +33,22 @@ const esmImport = new Function('specifier', 'return import(specifier)') as (
   specifier: string,
 ) => Promise<unknown>;
 
+// Vercel's dependency tracer (nft) only follows STATIC require()/import
+// specifiers. Our real load goes through `esmImport` above (to dodge tsc's
+// require() down-leveling), which nft cannot see - so it tree-shakes
+// better-auth out of the function bundle (ERR_MODULE_NOT_FOUND at runtime).
+// This dead, never-executed branch gives nft the static specifiers it needs to
+// include the package; the require() never runs, so it never throws
+// ERR_REQUIRE_ESM. Do not remove.
+/* c8 ignore start */
+if ((globalThis as { __nft_keep_better_auth__?: boolean }).__nft_keep_better_auth__) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('better-auth');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('better-auth/adapters/prisma');
+}
+/* c8 ignore stop */
+
 const env = loadEnv();
 const authPrisma = new PrismaClient(buildPrismaOptions());
 
