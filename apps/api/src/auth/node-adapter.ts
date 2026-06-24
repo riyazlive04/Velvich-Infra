@@ -1,6 +1,6 @@
 import type { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import type { IncomingHttpHeaders } from 'http';
-import type { auth as AuthInstance } from './auth.config';
+import type { Auth } from './auth.config';
 
 /**
  * Minimal Node <-> Web (Fetch) adapters for Better Auth.
@@ -72,7 +72,7 @@ async function writeWebResponse(webRes: WebResponse, res: ExpressResponse): Prom
 /** Mount Better Auth's web handler onto an Express app at /api/auth/*. */
 export function mountBetterAuth(
   server: { all: (path: string, handler: (req: ExpressRequest, res: ExpressResponse) => void) => void },
-  auth: typeof AuthInstance,
+  auth: Auth,
 ): void {
   const handler = auth.handler as unknown as (request: Request) => Promise<WebResponse>;
   server.all('/api/auth/*', (req: ExpressRequest, res: ExpressResponse) => {

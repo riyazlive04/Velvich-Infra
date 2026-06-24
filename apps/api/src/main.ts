@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import express from 'express';
 import { AppModule } from './app.module';
-import { auth } from './auth/auth.config';
+import { getAuth } from './auth/auth.config';
 import { mountBetterAuth } from './auth/node-adapter';
 import { loadEnv } from './config/env';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
@@ -19,7 +19,7 @@ async function bootstrap() {
 
   // Better Auth runs OUTSIDE the Nest pipeline (raw body), mounted before parsers.
   const expressApp = app.getHttpAdapter().getInstance();
-  mountBetterAuth(expressApp, auth);
+  mountBetterAuth(expressApp, await getAuth());
 
   // JSON / urlencoded parsers for everything else (multipart handled by multer).
   app.use(express.json({ limit: `${env.MAX_UPLOAD_MB}mb` }));

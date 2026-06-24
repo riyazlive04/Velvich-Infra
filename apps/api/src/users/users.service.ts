@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { RoleName, isCapability } from '@velvich/shared';
-import { auth } from '../auth/auth.config';
+import { getAuth } from '../auth/auth.config';
 import { PrismaService } from '../prisma/prisma.service';
 import { PermissionsService } from '../permissions/permissions.service';
 import { AuditService } from '../audit/audit.service';
@@ -47,7 +47,7 @@ export class UsersService {
     if (existing) throw new ConflictException('A user with this email already exists');
 
     const tempPassword = this.generateTempPassword();
-    const signUp = await auth.api.signUpEmail({
+    const signUp = await (await getAuth()).api.signUpEmail({
       body: { email: input.email, password: tempPassword, name: input.name },
     });
     if (!signUp?.user) throw new BadRequestException('Failed to create user');

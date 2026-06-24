@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { onboardingSchema, type OnboardingInput, DEFAULT_SETTINGS } from '@velvich/shared';
 import { Prisma } from '@prisma/client';
-import { auth } from './auth.config';
+import { getAuth } from './auth.config';
 import { Public } from './public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 import { ZodBody } from '../common/zod-validation.pipe';
@@ -41,7 +41,7 @@ export class OnboardingController {
     }
 
     // Create the owner through Better Auth so the credential/account row is valid.
-    const signUp = await auth.api.signUpEmail({
+    const signUp = await (await getAuth()).api.signUpEmail({
       body: {
         email: dto.owner.email,
         password: dto.owner.password,

@@ -47,3 +47,5 @@ tools/userguide/mobile/
 # vercel
 .vercel
 tools/logo-preview.png
+
+.vercel

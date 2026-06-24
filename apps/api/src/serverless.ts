@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import express, { type Express } from 'express';
 import { AppModule } from './app.module';
-import { auth } from './auth/auth.config';
+import { getAuth } from './auth/auth.config';
 import { mountBetterAuth } from './auth/node-adapter';
 import { loadEnv } from './config/env';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
@@ -31,7 +31,7 @@ export async function getApp(): Promise<Express> {
     app.enableCors({ origin: env.WEB_ORIGIN, credentials: true });
 
     // Better Auth runs outside Nest's pipeline (raw body), before the parsers.
-    mountBetterAuth(server, auth);
+    mountBetterAuth(server, await getAuth());
     app.use(express.json({ limit: `${env.MAX_UPLOAD_MB}mb` }));
     app.use(express.urlencoded({ extended: true }));
 
